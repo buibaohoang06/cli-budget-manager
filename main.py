@@ -2,6 +2,7 @@
 import json
 import datetime
 from columnar import columnar
+tempList = []
 #End user can set their own limit here
 limit = 0
 #checkFrequency is here to check whether the user has reached the limits multiple times (current setup: array > 5)
@@ -9,7 +10,7 @@ def checkFrequency():
     #Setting up variables
     global limit
     count = 0
-    tempList = []
+    global tempList
     #opening json file
     with open("rename.json", "r") as rename:
         data = json.loads(rename.read())
@@ -54,6 +55,7 @@ def tips():
     print(data['list'][random.randint(0, len(data['list']))])
 #printList is to print the expenses in a clean way
 def printList(option):
+    global tempList
     output = []
     #to calculate the total
     sum = 0
@@ -73,6 +75,8 @@ def printList(option):
             for i in range(0, len(data['item'])):
                 sum = sum + data['item'][i]['price']
             print("Your total spendings: " + str(sum) + "$")
+            print("Your total spendings in a list")
+            print(tempList)
     #error catching
     except TypeError:
         print("It seems like the list is empty")
