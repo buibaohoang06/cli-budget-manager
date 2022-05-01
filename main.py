@@ -1,18 +1,26 @@
 #importing required modules
 import json
 import datetime
+from types import coroutine
 from columnar import columnar
 tempList = []
 #End user can set their own limit here
 limit = 0
+#get a random tip from tips.json
+def tips():
+    import random
+    with open("tips.json", "r") as tips:
+        data = json.loads(tips.read())
+    print(data['list'][random.randint(0, len(data['list']))])
 #checkFrequency is here to check whether the user has reached the limits multiple times (current setup: array > 5)
-def checkFrequency():
+def checkFrequency(filename):
+    status = 0
     #Setting up variables
     global limit
     count = 0
     global tempList
     #opening json file
-    with open("rename.json", "r") as rename:
+    with open(filename, "r") as rename:
         data = json.loads(rename.read())
     #adding to local array the prices
     for i in range(0, len(data['item'])):
@@ -24,7 +32,10 @@ def checkFrequency():
         else:
             continue
     if count > len(tempList) / 2 and len(tempList) > 5:
-        print("It looks like you have surpassed your limit multiple times! Try harder next time!")
+        status = count
+    else:
+        status = 0
+    return status
 #appendData is to write data to the json db
 def appendData(data, filename="rename.json"):
     with open(filename,'r+') as file:
@@ -91,7 +102,8 @@ def main():
     while True:
         #delay for the user experience
         time.sleep(1)
-        checkFrequency()
+        if checkFrequency("rename.json") != 0:
+            print("WARNING!: It looks like you have surpassed your limit multiple times! Try harder next time!")
         command = input("Enter your option: ")
         if command.lower() == "add":
             name = input("Enter the name: ")
